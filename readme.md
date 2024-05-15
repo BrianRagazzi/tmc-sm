@@ -7,6 +7,7 @@ Links: https://vstellar.com/2023/08/tanzu-mission-control-self-managed-part-4-in
 1. K8s v1.26+
 2. Three worker nodes each with 4CPU & 8GB RAM
 3. Cert-Manager 1.10.2
+4. Bootstrap ubuntu VM with access to local harbor and Internet
 ```
 kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.10.2/cert-manager.yaml
 ```
@@ -27,6 +28,24 @@ kubectl apply -f https://github.com/carvel-dev/kapp-controller/releases/latest/d
 Install Tanzu Mission Control - Self Managed v1.2.0 onto a TKGS cluster
 Using a local harbor instance, local Active Directory
 For now, using self-signed certificates
+
+
+
+## Preparation
+1. In Harbor, create a project. I named mine "tmc-sm"
+2. Download the Tanzu Mission Control Self Managed v1.2.0 Tar file:  6.11GB
+  https://support.broadcom.com/group/ecx/productfiles?subFamily=VMware%20Tanzu%20Mission%20Control%20(Self-Managed)&displayGroup=Product%20Downloads&release=1.2.0&os=&servicePk=208628&language=EN
+3. SSH into ubuntu bootstrap VM, confirm it can curl to local harbor
+4. In bootstrap VM Create a folder and download tmc-sm tar package to it.  May have to download it from a browser and scp the tar file to the ubuntu VM
+5. Still on bootstrap VM, extract the tarfile into a folder:
+  ```
+  tar -xf tmc-self-managed-1.2.0.tar -C ./tanzumc
+  ```
+6. Run this command to push the extracted images to harbor repo
+  ```
+  tanzumc/tmc-sm push-images harbor --project harbor.lab.brianragazzi.com/tmc-sm --username harboradmin@ragazzilab.com --password P@ssW0rd
+  ```
+7. Docs say to the review the pushed-package-repository.json file taht was created, but you already know the values in it: repo-path and version
 
 
 
@@ -96,7 +115,7 @@ tanzu package installed delete -n tmc-local tanzu-mission-control
 
 # Post-Install
 
-## Tanzu Standard Package Repo
+## Tanzu Standard Package Repo - This takes about 20 minutes and pushes about 16 GB to harbor
 ```
 export IMGPKG_REGISTRY_HOSTNAME_0=harbor.lab.brianragazzi.com
 export IMGPKG_REGISTRY_USERNAME_0=harboradmin@ragazzilab.com
@@ -105,13 +124,13 @@ imgpkg copy \
 -b projects.registry.vmware.com/tkg/packages/standard/repo:v2024.2.1_tmc.1 \
 --to-repo harbor.lab.brianragazzi.com/tmc-sm/498533941640.dkr.ecr.us-west-2.amazonaws.com/packages/standard/repo
 ```
-## Hold on to this step until I get confirmation
+## This is just speculation for now - 5/15/24
 imgpkg copy \
 -b projects.registry.vmware.com/tkg/packages/standard/repo:v2024.4.19\
 --to-repo harbor.lab.brianragazzi.com/tmc-sm/498533941640.dkr.ecr.us-west-2.amazonaws.com/packages/standard/repo
 
 
-## Sonobuoy inspection images
+## Sonobuoy inspection images - this takes about 30 minutes
 1. edit inspection_images.sh, set top few variables
 2. SCP to an ubuntu VM with docker that can reach harbor and internet
 3. Run inspection_images.sh on the ubuntu VM
