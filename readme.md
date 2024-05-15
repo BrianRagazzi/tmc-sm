@@ -6,7 +6,7 @@ Links: https://vstellar.com/2023/08/tanzu-mission-control-self-managed-part-4-in
 ## PreReqs
 1. K8s v1.26+
 2. Three worker nodes each with 4CPU & 8GB RAM
-3. Cert-Manager 1.10.2
+3. Cert-Manager 1.10.2 (Docs say this specific version is needed although it's unsupported)
 ```
 kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.10.2/cert-manager.yaml
 ```
@@ -28,6 +28,7 @@ kubectl apply -f https://github.com/carvel-dev/kapp-controller/releases/latest/d
 2. Make sure that the idpGroupRoles names exactly match the CN of groups in ActiveDiretory and are found
    under the groupBaseDN
 3. Removing does not clean up well.  It leaves behind not only pvc and pods, but also secrets that contain certs, etc.  As a result, reinstalls get mixed certifcates and unexpected behavior.  If removing to redeploy, I suggest deleting the package, the redis pvc and ten the entire tmc-local namespace
+4. Using a self-signed cert is a problem.  k8s clusters will not trust the cert to install anything from tmc until you add the CA to the trust
 
 
 # Objective:
