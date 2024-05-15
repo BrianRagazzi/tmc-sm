@@ -4,7 +4,7 @@
 Links: https://vstellar.com/2023/08/tanzu-mission-control-self-managed-part-4-install-cert-manager-and-cluster-issuer-for-tls-certificates/
 
 ## Cluster PreReqs
-1. v1.26+
+1. K8s v1.26+
 2. Three worker nodes each with 4CPU & 8GB RAM
 3. Cert-Manager 1.10.2
 ```
@@ -21,6 +21,12 @@ kubectl apply -f https://github.com/carvel-dev/kapp-controller/releases/latest/d
 2. Make sure that the idpGroupRoles names exactly match the CN of groups in ActiveDiretory and are found
    under the groupBaseDN
 3. Removing does not clean up well.  It leaves behind not only pvc and pods, but also secrets that contain certs, etc.  As a result, reinstalls get mixed certifcates and unexpected behavior.  If removing to redeploy, I suggest deleting the package, the redis pvc and ten the entire tmc-local namespace
+
+
+# Objective:
+Install Tanzu Mission Control - Self Managed v1.2.0 onto a TKGS cluster
+Using a local harbor instance, local Active Directory
+For now, using self-signed certificates
 
 
 
@@ -53,12 +59,13 @@ tanzu package available get "tmc.tanzu.vmware.com/1.2.0" --namespace tmc-local -
 
 
 ## Create Certificate - LetsEncrypt Wildcard Version - DON'T DO THIS
+```
 kubectl create secret tls stack-tls --key=brianragazzi-wildcard.key --cert=full.crt -n tmc-local
 kubectl create secret tls server-tls --key=brianragazzi-wildcard.key --cert=full.crt -n tmc-local
 kubectl create secret tls minio-tls --key=brianragazzi-wildcard.key --cert=full.crt -n tmc-local
 kubectl create secret tls pinniped-supervisor-server-tls --key=brianragazzi-wildcard.key --cert=full.crt -n tmc-local
 kubectl create secret tls tenancy-service-tls --key=brianragazzi-wildcard.key --cert=full.crt -n tmc-local
-
+```
 
 
 
