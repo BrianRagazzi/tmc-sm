@@ -1,14 +1,19 @@
 # Tanzu Mission Control - Self Managed - install notes
 
+## Helpful Links
 Links: https://vstellar.com/2023/08/tanzu-mission-control-self-managed-part-4-install-cert-manager-and-cluster-issuer-for-tls-certificates/
 
-Cert-Manager 1.10.2
+## Cluster PreReqs
+1. v1.26+
+2. Three worker nodes each with 4CPU & 8GB RAM
+3. Cert-Manager 1.10.2
 ```
 kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.10.2/cert-manager.yaml
 ```
-
-Kapp-controller (included in recent TKRs in vSphere)
-kubectl apply -f https://github.com/carvel-dev/kapp-controller/releases/latest/download/release.yml
+4. Kapp-controller (included in recent TKRs in vSphere8 - do not install unless needed)
+```
+kubectl apply -f https://github.com/carvel-dev/kapp-controller/releases/latest/download/release.yml --dry=run=client
+```
 
 ## GOTCHAS... so far.
 
