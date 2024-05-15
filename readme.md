@@ -3,11 +3,10 @@
 ## Helpful Links
 Links: https://vstellar.com/2023/08/tanzu-mission-control-self-managed-part-4-install-cert-manager-and-cluster-issuer-for-tls-certificates/
 
-## Cluster PreReqs
+## PreReqs
 1. K8s v1.26+
 2. Three worker nodes each with 4CPU & 8GB RAM
 3. Cert-Manager 1.10.2
-4. Bootstrap ubuntu VM with access to local harbor and Internet
 ```
 kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.10.2/cert-manager.yaml
 ```
@@ -15,6 +14,13 @@ kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/
 ```
 kubectl apply -f https://github.com/carvel-dev/kapp-controller/releases/latest/download/release.yml --dry=run=client
 ```
+4. Bootstrap ubuntu VM with access to local harbor and Internet
+5. DNS server/forwarder that can handle wildcards.
+  You'll need to be able to add the following:
+    a. CNAME for tmc.mydomain.com
+    b. wildcard for *.tmc.mydomain.com
+    c. wildcard for *.s3.tmc.mydomain.com
+
 
 ## GOTCHAS... so far.
 
@@ -39,13 +45,13 @@ For now, using self-signed certificates
 4. In bootstrap VM Create a folder and download tmc-sm tar package to it.  May have to download it from a browser and scp the tar file to the ubuntu VM
 5. Still on bootstrap VM, extract the tarfile into a folder:
   ```
-  tar -xf tmc-self-managed-1.2.0.tar -C ./tanzumc
+  tar -xvf tmc_self_managed_1.2.0.tar -C ./tanzumc
   ```
 6. Run this command to push the extracted images to harbor repo
   ```
   tanzumc/tmc-sm push-images harbor --project harbor.lab.brianragazzi.com/tmc-sm --username harboradmin@ragazzilab.com --password P@ssW0rd
   ```
-7. Docs say to the review the pushed-package-repository.json file taht was created, but you already know the values in it: repo-path and version
+7. Docs say to the review the pushed-package-repository.json file that was created, but you already know the values in it: repo-path and version
 
 
 
@@ -68,13 +74,13 @@ tanzu package available get "tmc.tanzu.vmware.com/1.2.0" --namespace tmc-local -
 ## Create Certificates - ClusterIssuer
   1. Check, update & run the ./self-signed-certs/create-ca-cert.sh script to produce the ca.key and tmcsm-ca.crt files
   2. Run this to create the secret in the cert-manager namespace:
-    ```
-    kubectl create secret tls local-ca --key ./self-signed-certs/ca.key --cert ./self-signed-certs/tmcsm-ca.crt -n cert-manager
-    ```
+```
+kubectl create secret tls local-ca --key ./self-signed-certs/ca.key --cert ./self-signed-certs/tmcsm-ca.crt -n cert-manager
+```
   3. Apply the ./self-signed-certs/local-issuer.yaml to the cert-manager namespace
-    ```
-    kubectl apply -f ./self-signed-certs/local-issuer.yaml
-    ```
+```
+kubectl apply -f ./self-signed-certs/local-issuer.yaml
+```
 
 
 ## Create Certificate - LetsEncrypt Wildcard Version - DON'T DO THIS
@@ -119,7 +125,7 @@ tanzu package installed delete -n tmc-local tanzu-mission-control
 ```
 export IMGPKG_REGISTRY_HOSTNAME_0=harbor.lab.brianragazzi.com
 export IMGPKG_REGISTRY_USERNAME_0=harboradmin@ragazzilab.com
-export IMGPKG_REGISTRY_PASSWORD_0=VMware1!
+export IMGPKG_REGISTRY_PASSWORD_0=P@SSW0RD
 imgpkg copy \
 -b projects.registry.vmware.com/tkg/packages/standard/repo:v2024.2.1_tmc.1 \
 --to-repo harbor.lab.brianragazzi.com/tmc-sm/498533941640.dkr.ecr.us-west-2.amazonaws.com/packages/standard/repo
