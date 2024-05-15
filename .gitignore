@@ -18,3 +18,4 @@ tls/
 .DS_Store
 scratch/
 *.key
+values-real.yaml
