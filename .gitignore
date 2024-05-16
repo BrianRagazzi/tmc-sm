@@ -19,4 +19,4 @@ tls/
 scratch/
 *.key
 values-real.yaml
-private*/
+**secret.yaml
