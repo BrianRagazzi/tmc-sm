@@ -28,7 +28,8 @@ kubectl apply -f https://github.com/carvel-dev/kapp-controller/releases/latest/d
 2. Make sure that the idpGroupRoles names exactly match the CN of groups in ActiveDiretory and are found
    under the groupBaseDN
 3. Removing does not clean up well.  It leaves behind not only pvc and pods, but also secrets that contain certs, etc.  As a result, reinstalls get mixed certifcates and unexpected behavior.  If removing to redeploy, I suggest deleting the package, the redis pvc and ten the entire tmc-local namespace
-4. Using a self-signed cert is a problem.  k8s clusters will not trust the cert to install anything from tmc until you add the CA to the trust
+4. Using a self-signed cert is a problem.  k8s clusters will not trust the cert to install anything from tmc until you add the CA to the trust.  Updated notes for Cloudflare DNS with ACME ClusterIssuer
+5. Not sure why the LE Cert was not fully trusted, but I had to add its root cert to trusted CAs
 
 
 # Objective:
@@ -72,7 +73,7 @@ tanzu package repository add tanzu-mission-control-packages --url "harbor.lab.br
 tanzu package available get "tmc.tanzu.vmware.com/1.2.0" --namespace tmc-local --values-schema
 ```
 
-## Create Certificates - ClusterIssuer
+## Create Certificates - Self-Signed ClusterIssuer
   1. Check, update & run the ./self-signed-certs/create-ca-cert.sh script to produce the ca.key and tmcsm-ca.crt files
   2. Run this to create the secret in the cert-manager namespace:
 ```
@@ -83,16 +84,21 @@ kubectl create secret tls local-ca --key ./self-signed-certs/ca.key --cert ./sel
 kubectl apply -f ./self-signed-certs/local-issuer.yaml
 ```
 
-
-## Create Certificate - LetsEncrypt Wildcard Version - DON'T DO THIS
+## Create CloudFlare ClusterIssuer
+1. Obtain an API Key from your cloudflare account, grant it access to edit the domain
+2. Create a secret in the cert-manager namespace for your cloudflare api key
 ```
-kubectl create secret tls stack-tls --key=brianragazzi-wildcard.key --cert=full.crt -n tmc-local
-kubectl create secret tls server-tls --key=brianragazzi-wildcard.key --cert=full.crt -n tmc-local
-kubectl create secret tls minio-tls --key=brianragazzi-wildcard.key --cert=full.crt -n tmc-local
-kubectl create secret tls pinniped-supervisor-server-tls --key=brianragazzi-wildcard.key --cert=full.crt -n tmc-local
-kubectl create secret tls tenancy-service-tls --key=brianragazzi-wildcard.key --cert=full.crt -n tmc-local
+kubectl create secret generic -n cert-manager cloudflare-api-token --from-literal=api-token=ABC123
 ```
-
+3. Create clusterissuer (adjust email address, etc first)
+```
+kubectl apply -n cert-manager -f ./cloudflare/clusterissuer.yaml
+```
+4. Create a test certificate to validate that the clusterissuer is working as expected (adjust FQDN first)
+```
+kubectl apply -n default -f ./cloudflare/testcert.com
+kubectl get certificate -n default
+```
 
 
 ## Install! - This will take about 15 mins
