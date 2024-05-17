@@ -65,6 +65,9 @@ telemetry:
   eanNumber: ean-not-specified # if EAN is available
   ceipAgreement: false
 size: small
+tanzuStandard:
+  imageRegistry: harbor.lab.brianragazzi.com
+  relativePath: tanzu-standard/repo:v2024.2.1_tmc.1
 #certificateImport: true
 trustedCAs:
   custom-ca.pem: |
