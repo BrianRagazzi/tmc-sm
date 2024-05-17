@@ -136,6 +136,15 @@ export IMGPKG_REGISTRY_PASSWORD_0=P@SSW0RD
 imgpkg copy \
 -b projects.registry.vmware.com/tkg/packages/standard/repo:v2024.2.1_tmc.1 \
 --to-repo harbor.lab.brianragazzi.com/tmc-sm/498533941640.dkr.ecr.us-west-2.amazonaws.com/packages/standard/repo
+
+imgpkg copy \
+-b projects.registry.vmware.com/tkg/packages/standard/repo:v2024.4.19 \
+--to-repo harbor.lab.brianragazzi.com/tanzu-standard/repo
+
+imgpkg copy \
+-b projects.registry.vmware.com/tkg/packages/standard/repo:v2024.2.1_tmc.1 \
+--to-repo harbor.lab.brianragazzi.com/tanzu-standard/repo
+
 ```
 ## This is just speculation for now - 5/15/24
 imgpkg copy \
