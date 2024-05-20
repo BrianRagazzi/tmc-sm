@@ -10,6 +10,10 @@ Links: https://vstellar.com/2023/08/tanzu-mission-control-self-managed-part-4-in
 ```
 kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.10.2/cert-manager.yaml
 ```
+  3a.  if you have a Split-brain DNS and cluster default resolvers do not point to public DNS, install cert-manager so that it uses ONLY external resolvers:
+    ```
+    helm install   cert-manager jetstack/cert-manager   --namespace cert-manager   --create-namespace   --version v1.10.2   --set installCRDs=true   --set 'extraArgs={--dns01-recursive-nameservers-only,--dns01-recursive-nameservers=8.8.8.8:53\,1.1.1.1:53}'
+    ```
 4. Kapp-controller (included in recent TKRs in vSphere8 - do not install unless needed)
 ```
 kubectl apply -f https://github.com/carvel-dev/kapp-controller/releases/latest/download/release.yml --dry=run=client
