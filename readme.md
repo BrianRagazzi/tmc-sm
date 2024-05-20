@@ -168,3 +168,19 @@ imgpkg copy \
 1. edit inspection_images.sh, set top few variables
 2. SCP to an ubuntu VM with docker that can reach harbor and internet
 3. Run inspection_images.sh on the ubuntu VM
+
+
+
+## Registering a vSphere-with-Tanzu Supervisor Cluster **IMPORTANT AND POORLY DOCUMENTED**
+1. Read this:  https://docs.vmware.com/en/VMware-vSphere/8.0/vsphere-with-tanzu-tkg/GUID-88D350BF-B439-4168-9856-E67081CDB623.html
+2. Login to and switch context to the supervisor cluster
+3. Get a list of Namespaces, find the one that looks like 'svc-tmc-c######'
+4. Create an AgentConfig, see ./vSphere-With-Tanzu/agent-config.yaml
+```
+kubectl create -n svc-tmc-c###### -f ./vSphere-With-Tanzu/agent-config.yaml
+```
+5. Now, you can attempt to register the supervisor cluster through TMC UI, obtain the registration URL
+6. Update, then apply the agentinstall-register.yaml
+```
+kubectl create -n svc-tmc-c###### -f ./vSphere-With-Tanzu/agentinstall-register.yaml
+```

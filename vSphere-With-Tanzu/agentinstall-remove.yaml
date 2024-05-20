@@ -1,0 +1,7 @@
+apiVersion: installers.tmc.cloud.vmware.com/v1alpha1
+kind: AgentInstall
+metadata:
+  name: tmc-agent-remover-config
+  namespace: svc-tmc-c8351287
+spec:
+  operation: UNINSTALL

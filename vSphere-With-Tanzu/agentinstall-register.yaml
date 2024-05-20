@@ -1,0 +1,8 @@
+apiVersion: installers.tmc.cloud.vmware.com/v1alpha1
+kind: AgentInstall
+metadata:
+  name: tmc-agent-installer-config
+  namespace: svc-tmc-c8351287
+spec:
+  operation: INSTALL
+  registrationLink: https://tmc.lab.brianragazzi.com/installer?id=1ccec12563963d795662781ad4327b0ce5485e138ac7f7c048311de62534709f&source=registration&type=tkgs
