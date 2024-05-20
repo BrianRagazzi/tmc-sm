@@ -6,7 +6,7 @@ spec:
   secretName: testcert
   renewBefore: 240h
   dnsNames:
-  - 'test.tmc.lab.brianragazzi.com'
+  - 'testcert.tmc.lab.brianragazzi.com'
   issuerRef:
     name: cloudflare-issuer
     kind: ClusterIssuer
