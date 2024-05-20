@@ -11,7 +11,7 @@ Links: https://vstellar.com/2023/08/tanzu-mission-control-self-managed-part-4-in
 kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.10.2/cert-manager.yaml
 ```
 
-If you have a Split-brain DNS and cluster default resolvers do not resolve public DNS, install cert-manager so that it uses ONLY external resolvers:
+  If you have a Split-brain DNS and cluster default resolvers do not resolve public DNS, install cert-manager so that it uses ONLY external resolvers:
 ```
 helm install cert-manager jetstack/cert-manager \
   --namespace cert-manager \
@@ -105,7 +105,8 @@ kubectl create secret generic -n cert-manager cloudflare-api-token --from-litera
 kubectl apply -n cert-manager -f ./cloudflare/clusterissuer.yaml
 ```
 4. Create a test certificate to validate that the clusterissuer is working as expected (adjust FQDN first)
-Rememeber, cloudflare webhook in cert-manager must be able to validate the PUBLIC DNS record exists, so if cert-manager is using internal DNS servers, that may not work.
+
+  Remember, cloudflare webhook in cert-manager must be able to validate the PUBLIC DNS record exists, so if cert-manager is using internal DNS servers, that may not work until you configure cert-manager with recursive nameservers
 ```
 kubectl apply -n default -f ./cloudflare/testcert.com
 kubectl get certificate -n default
