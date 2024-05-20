@@ -10,10 +10,16 @@ Links: https://vstellar.com/2023/08/tanzu-mission-control-self-managed-part-4-in
 ```
 kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.10.2/cert-manager.yaml
 ```
-  3a.  if you have a Split-brain DNS and cluster default resolvers do not point to public DNS, install cert-manager so that it uses ONLY external resolvers:
-    ```
-    helm install   cert-manager jetstack/cert-manager   --namespace cert-manager   --create-namespace   --version v1.10.2   --set installCRDs=true   --set 'extraArgs={--dns01-recursive-nameservers-only,--dns01-recursive-nameservers=8.8.8.8:53\,1.1.1.1:53}'
-    ```
+
+If you have a Split-brain DNS and cluster default resolvers do not resolve public DNS, install cert-manager so that it uses ONLY external resolvers:
+```
+helm install cert-manager jetstack/cert-manager \
+  --namespace cert-manager \
+  --create-namespace \
+  --version v1.10.2 \
+  --set installCRDs=true  \
+  --set 'extraArgs={--dns01-recursive-nameservers-only,--dns01-recursive-nameservers=8.8.8.8:53\,1.1.1.1:53}'
+```
 4. Kapp-controller (included in recent TKRs in vSphere8 - do not install unless needed)
 ```
 kubectl apply -f https://github.com/carvel-dev/kapp-controller/releases/latest/download/release.yml --dry=run=client
@@ -99,6 +105,7 @@ kubectl create secret generic -n cert-manager cloudflare-api-token --from-litera
 kubectl apply -n cert-manager -f ./cloudflare/clusterissuer.yaml
 ```
 4. Create a test certificate to validate that the clusterissuer is working as expected (adjust FQDN first)
+Rememeber, cloudflare webhook in cert-manager must be able to validate the PUBLIC DNS record exists, so if cert-manager is using internal DNS servers, that may not work.
 ```
 kubectl apply -n default -f ./cloudflare/testcert.com
 kubectl get certificate -n default
@@ -124,10 +131,10 @@ tanzu package installed update tanzu-mission-control --values-file ./values.yaml
 ```
 tanzu package installed delete -n tmc-local tanzu-mission-control
 ```
-### This does not remove all the things, manually remove the following
-1. pvc for redis pod
-2. all secrets in tmc-local ns
-3. suggest deleting and recreating the namespace entirely
+  ### This does not remove all the things, manually remove the following
+  1. pvc for redis pod
+  2. all secrets in tmc-local ns
+  3. suggest deleting and recreating the namespace entirely
 
 
 # Post-Install
