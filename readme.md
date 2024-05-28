@@ -149,9 +149,11 @@ imgpkg copy \
 --to-repo harbor.lab.brianragazzi.com/tanzu-standard/repo
 ```
 ### original/default
+```
 imgpkg copy \
 -b projects.registry.vmware.com/tkg/packages/standard/repo:v2024.2.1_tmc.1 \
 --to-repo harbor.lab.brianragazzi.com/tmc-sm/498533941640.dkr.ecr.us-west-2.amazonaws.com/packages/standard/repo
+```
 
 ### Updated repo
 ```
