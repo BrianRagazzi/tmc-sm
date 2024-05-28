@@ -34,6 +34,9 @@ do
 
    docker push ${CUSTOM_TMC_REPO}/extensions/inspection-images/$base
    echo "===================PUSHING: ${CUSTOM_TMC_REPO}/extensions/inspection-images/$base ==========="
+   echo "removing image"
+   docker rmi ${CUSTOM_TMC_REPO}/extensions/inspection-images/$base
+   docker rmi $image
    done < images_$i.txt
 done
 

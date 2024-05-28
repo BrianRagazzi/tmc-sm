@@ -1,7 +1,6 @@
 # Tanzu Mission Control - Self Managed - install notes
 
-## Helpful Links
-Links: https://vstellar.com/2023/08/tanzu-mission-control-self-managed-part-4-install-cert-manager-and-cluster-issuer-for-tls-certificates/
+
 
 ## PreReqs
 1. K8s v1.26+
@@ -147,16 +146,18 @@ export IMGPKG_REGISTRY_USERNAME_0=harboradmin@ragazzilab.com
 export IMGPKG_REGISTRY_PASSWORD_0=P@SSW0RD
 imgpkg copy \
 -b projects.registry.vmware.com/tkg/packages/standard/repo:v2024.2.1_tmc.1 \
---to-repo harbor.lab.brianragazzi.com/tmc-sm/498533941640.dkr.ecr.us-west-2.amazonaws.com/packages/standard/repo
-
-imgpkg copy \
--b projects.registry.vmware.com/tkg/packages/standard/repo:v2024.4.19 \
 --to-repo harbor.lab.brianragazzi.com/tanzu-standard/repo
-
+```
+### original/default
 imgpkg copy \
 -b projects.registry.vmware.com/tkg/packages/standard/repo:v2024.2.1_tmc.1 \
---to-repo harbor.lab.brianragazzi.com/tanzu-standard/repo
+--to-repo harbor.lab.brianragazzi.com/tmc-sm/498533941640.dkr.ecr.us-west-2.amazonaws.com/packages/standard/repo
 
+### Updated repo
+```
+imgpkg copy \
+-b projects.registry.vmware.com/tkg/packages/standard/repo:v2024.5.16 \
+--to-repo harbor.lab.brianragazzi.com/tanzu-standard/repo
 ```
 ## This is just speculation for now - 5/15/24
 imgpkg copy \
@@ -184,3 +185,7 @@ kubectl create -n svc-tmc-c###### -f ./vSphere-With-Tanzu/agent-config.yaml
 ```
 kubectl create -n svc-tmc-c###### -f ./vSphere-With-Tanzu/agentinstall-register.yaml
 ```
+
+
+## Helpful Links
+Links: https://vstellar.com/2023/08/tanzu-mission-control-self-managed-part-4-install-cert-manager-and-cluster-issuer-for-tls-certificates/
