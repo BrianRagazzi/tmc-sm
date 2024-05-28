@@ -159,10 +159,6 @@ imgpkg copy \
 -b projects.registry.vmware.com/tkg/packages/standard/repo:v2024.5.16 \
 --to-repo harbor.lab.brianragazzi.com/tanzu-standard/repo
 ```
-## This is just speculation for now - 5/15/24
-imgpkg copy \
--b projects.registry.vmware.com/tkg/packages/standard/repo:v2024.4.19\
---to-repo harbor.lab.brianragazzi.com/tmc-sm/498533941640.dkr.ecr.us-west-2.amazonaws.com/packages/standard/repo
 
 
 ## Sonobuoy inspection images - this takes about 30 minutes
