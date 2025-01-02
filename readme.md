@@ -155,8 +155,9 @@ imgpkg copy \
 -b extensions.aws-usw2.tmc.cloud.vmware.com/packages/standard/repo:v2024.8.2 \
 --to-repo harbor.lab.brianragazzi.com/tmc-sm/498533941640.dkr.ecr.us-west-2.amazonaws.com/packages/standard/repo
 ```
-### Istio images
+### Istio images - quick, small
 ```
+imgpkg copy \
 -b extensions.aws-usw2.tmc.cloud.vmware.com/packages/istio-oss-packages:1.22.0-tanzu.2 \
 --to-repo harbor.lab.brianragazzi.com/tmc-sm/packages/istio-oss-packages
 ```
