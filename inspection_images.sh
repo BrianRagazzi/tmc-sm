@@ -1,7 +1,7 @@
 #!/bin/bash
 
-VERSION=${1:-"v0.57.1"}
-LATEST_RELEASE=${2:-"sonobuoy_0.57.1_linux_amd64.tar.gz"}
+VERSION=${1:-"v0.57.2"}
+LATEST_RELEASE=${2:-"sonobuoy_0.57.2_linux_amd64.tar.gz"}
 CUSTOM_REGISTRY=${3:-"harbor.lab.brianragazzi.com"}
 DOCKER_PROXY=${4:-"harbor.lab.brianragazzi.com/cache"} # optional argument
 CUSTOM_TMC_REPO="${CUSTOM_REGISTRY}/tmc-sm/498533941640.dkr.ecr.us-west-2.amazonaws.com"
@@ -41,15 +41,15 @@ do
 done
 
 # not part of sonobuoy image list, install manually, update these as images are found
-docker pull k8s.gcr.io/e2e-test-images/agnhost:2.31
+docker pull k8s.gcr.io/e2e-test-images/agnhost:2.47
 docker pull k8s.gcr.io/pause:3.9
 docker pull registry.k8s.io/e2e-test-images/volume/gluster:1.3
 docker pull registry.k8s.io/e2e-test-images/volume/nfs:1.3
 docker tag registry.k8s.io/e2e-test-images/volume/gluster:1.3 ${CUSTOM_TMC_REPO}/extensions/inspection-images/volume/gluster:1.3
 docker tag registry.k8s.io/e2e-test-images/volume/nfs:1.3 ${CUSTOM_TMC_REPO}/extensions/inspection-images/volume/nfs:1.3
-docker tag k8s.gcr.io/e2e-test-images/agnhost:2.31 ${CUSTOM_TMC_REPO}/extensions/inspection-images/agnhost:2.31
+docker tag k8s.gcr.io/e2e-test-images/agnhost:2.47 ${CUSTOM_TMC_REPO}/extensions/inspection-images/agnhost:2.31
 docker tag k8s.gcr.io/pause:3.9 ${CUSTOM_TMC_REPO}/extensions/inspection-images/pause:3.9
-docker push ${CUSTOM_TMC_REPO}/extensions/inspection-images/agnhost:2.31
+docker push ${CUSTOM_TMC_REPO}/extensions/inspection-images/agnhost:2.47
 docker push ${CUSTOM_TMC_REPO}/extensions/inspection-images/pause:3.9
 docker push ${CUSTOM_TMC_REPO}/extensions/inspection-images/volume/gluster:1.3
 docker push ${CUSTOM_TMC_REPO}/extensions/inspection-images/volume/nfs:1.3
