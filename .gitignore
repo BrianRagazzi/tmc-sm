@@ -20,3 +20,4 @@ scratch/
 *.key
 values-real.yaml
 **secret.yaml
+/tmc-sm-support-bundle/
