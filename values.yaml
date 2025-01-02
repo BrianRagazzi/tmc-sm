@@ -68,6 +68,7 @@ size: small
 tanzuStandard:
   imageRegistry: harbor.lab.brianragazzi.com
   relativePath: tanzu-standard/repo:v2024.5.16  #repo:v2024.2.1_tmc.1
+prometheusVolumeSize: 10Gi
 certificateImport: false #true
 trustedCAs:
   custom-ca.pem: |
