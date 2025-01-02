@@ -12,6 +12,7 @@ kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/
 
   If you have a Split-brain DNS and cluster default resolvers do not resolve public DNS, install cert-manager so that it uses ONLY external resolvers:
 ```
+helm repo add jetstack https://charts.jetstack.io --force-update
 helm install cert-manager jetstack/cert-manager \
   --namespace cert-manager \
   --create-namespace \
@@ -42,7 +43,7 @@ kubectl apply -f https://github.com/carvel-dev/kapp-controller/releases/latest/d
 
 
 # Objective:
-Install Tanzu Mission Control - Self Managed v1.2.0 onto a TKGS cluster
+Install Tanzu Mission Control - Self Managed v1.4.0 onto a TKGS cluster
 Using a local harbor instance, local Active Directory
 For now, using self-signed certificates
 
@@ -50,13 +51,13 @@ For now, using self-signed certificates
 
 ## Preparation
 1. In Harbor, create a project. I named mine "tmc-sm"
-2. Download the Tanzu Mission Control Self Managed v1.2.0 Tar file:  6.11GB
-  https://support.broadcom.com/group/ecx/productfiles?subFamily=VMware%20Tanzu%20Mission%20Control%20(Self-Managed)&displayGroup=Product%20Downloads&release=1.2.0&os=&servicePk=208628&language=EN
+2. Download the Tanzu Mission Control Self Managed v1.4.0 Tar file:  6.11GB
+  https://support.broadcom.com/group/ecx/productfiles?subFamily=VMware%20Tanzu%20Mission%20Control%20(Self-Managed)&displayGroup=Product%20Downloads&release=1.4.0&os=&servicePk=208628&language=EN
 3. SSH into ubuntu bootstrap VM, confirm it can curl to local harbor
 4. In bootstrap VM Create a folder and download tmc-sm tar package to it.  May have to download it from a browser and scp the tar file to the ubuntu VM
 5. Still on bootstrap VM, extract the tarfile into a folder:
   ```
-  tar -xvf tmc_self_managed_1.2.0.tar -C ./tanzumc
+  tar -xvf tmc_self_managed_1.4.0.tar -C ./tanzumc
   ```
 6. Run this command to push the extracted images to harbor repo
   ```
@@ -74,12 +75,12 @@ kubectl label ns tmc-local pod-security.kubernetes.io/enforce=privileged
 
 ## add repo
 ```
-tanzu package repository add tanzu-mission-control-packages --url "harbor.lab.brianragazzi.com/tmc-sm/package-repository:1.2.0" --namespace tmc-local
+tanzu package repository add tanzu-mission-control-packages --url "harbor.lab.brianragazzi.com/tmc-sm/package-repository:1.4.0" --namespace tmc-local
 ```
 
 ## get values schema
 ```
-tanzu package available get "tmc.tanzu.vmware.com/1.2.0" --namespace tmc-local --values-schema
+tanzu package available get "tmc.tanzu.vmware.com/1.4.0" --namespace tmc-local --values-schema
 ```
 
 ## Create Certificates - Self-Signed ClusterIssuer
@@ -114,7 +115,7 @@ kubectl get certificate -n default
 
 ## Install! - This will take about 15 mins
 ```
-tanzu package install tanzu-mission-control -p "tmc.tanzu.vmware.com" --version "1.2.0" --values-file ./values.yaml --namespace tmc-local
+tanzu package install tanzu-mission-control -p "tmc.tanzu.vmware.com" --version "1.4.0" --values-file ./values.yaml --namespace tmc-local
 ```
 ### validate
 ```
@@ -139,15 +140,27 @@ tanzu package installed delete -n tmc-local tanzu-mission-control
 
 # Post-Install
 
+## tamzu plugins
+```
+tanzu plugin upload-bundle --tar tanzumc/tanzu-cli-plugins/tmc.tar.gz --to-repo harbor.lab.brianragazzi.com/tmc-sm
+tanzu plugin source update default -u harbor.lab.brianragazzi.com/tmc-sm/plugin-inventory:latest
+```
+
 ## Tanzu Standard Package Repo - This takes about 20 minutes and pushes about 16 GB to harbor
 ```
 export IMGPKG_REGISTRY_HOSTNAME_0=harbor.lab.brianragazzi.com
 export IMGPKG_REGISTRY_USERNAME_0=harboradmin@ragazzilab.com
-export IMGPKG_REGISTRY_PASSWORD_0=P@SSW0RD
+export IMGPKG_REGISTRY_PASSWORD_0=P@ssW0rd
 imgpkg copy \
--b projects.registry.vmware.com/tkg/packages/standard/repo:v2024.2.1_tmc.1 \
---to-repo harbor.lab.brianragazzi.com/tanzu-standard/repo
+-b extensions.aws-usw2.tmc.cloud.vmware.com/packages/standard/repo:v2024.8.2 \
+--to-repo harbor.lab.brianragazzi.com/tmc-sm/498533941640.dkr.ecr.us-west-2.amazonaws.com/packages/standard/repo
 ```
+### Istio images
+```
+-b extensions.aws-usw2.tmc.cloud.vmware.com/packages/istio-oss-packages:1.22.0-tanzu.2 \
+--to-repo harbor.lab.brianragazzi.com/tmc-sm/packages/istio-oss-packages
+```
+
 ### original/default
 ```
 imgpkg copy \
